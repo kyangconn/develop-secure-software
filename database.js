@@ -17,11 +17,28 @@ const client = new Client({
     database: process.env.DATABASE_NAME,
 })
 
-client.connect()
-    .then(() => {
+async function verifyConnect() {
+    try {
+        await client.connect();
         console.log('Connected to database');
-    })
-    .catch(err => {
-        console.log('Connection Error:', err.message)
-    });
+        client.release();
+    } catch (error) {
+        console.log('Connection Error:', error.message)
+        process.exit(1);
+    }
+}
 
+async function connect() {
+    try {
+        const connection = await client.connect();
+        console.log('Connected to database');
+        return connection;
+    } catch (error) {
+        console.log('Connection Error:', error.message)
+        process.exit(1);
+    }
+}
+
+
+
+module.exports = {verifyConnect, client}
